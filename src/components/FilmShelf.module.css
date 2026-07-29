@@ -3,8 +3,8 @@
   flex-direction: column;
   height: 100dvh;
   min-height: 100vh;
-  background: #f5f1ea;
-  color: #171512;
+  background: #f3f2f2;
+  color: #4e4e4e;
 }
 
 .siteHeader {
@@ -14,7 +14,7 @@
   justify-content: center;
   gap: 24px;
   padding: 20px 28px 16px;
-  border-bottom: 1px solid rgba(23, 21, 18, 0.12);
+  border-bottom: 1px solid rgba(78, 78, 78, 0.12);
 }
 
 .meta {
@@ -26,7 +26,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-variant-caps: all-small-caps;
-  color: #8a8478;
+  color: #6d6d6d;
 }
 
 .shelfWrap {
@@ -56,11 +56,11 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 28px;
-  border-top: 1px solid rgba(23, 21, 18, 0.12);
+  border-top: 1px solid rgba(78, 78, 78, 0.12);
   font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
   font-size: 11px;
   letter-spacing: 0.04em;
-  color: #8a8478;
+  color: #6d6d6d;
 }
 
 .footer p {

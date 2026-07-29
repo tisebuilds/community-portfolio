@@ -31,10 +31,12 @@ export default function FilmShelf() {
 
       <div className={styles.shelfWrap}>
         <div className={styles.shelf}>
-          {events.map((event) => (
+          {events.map((event, index) => (
             <RollColumn
               key={event.slug}
               event={event}
+              index={index}
+              autoScrollPaused={active !== null}
               onPhotoClick={onPhotoClick}
             />
           ))}
