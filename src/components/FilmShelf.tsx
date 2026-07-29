@@ -21,12 +21,10 @@ export default function FilmShelf() {
 
   const onClose = useCallback(() => setActive(null), []);
 
-  const rollEnd = String(events.length).padStart(2, "0");
-
   return (
     <div className={styles.page}>
       <header className={styles.siteHeader}>
-        <p className={styles.meta}>COLORSTACK NYC · ROLL 01–{rollEnd}</p>
+        <p className={styles.meta}>I&apos;m a designer who loves hosting things</p>
       </header>
 
       <div className={styles.shelfWrap}>
