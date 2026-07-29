@@ -1,0 +1,60 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px 32px;
+  background: rgba(23, 21, 18, 0.88);
+  cursor: zoom-out;
+}
+
+.close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 1;
+  margin: 0;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: #f5f1ea;
+  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: min(90vw, 520px);
+  max-height: 100%;
+  margin: 0;
+  cursor: default;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.caption {
+  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(245, 241, 234, 0.75);
+  text-align: center;
+}
