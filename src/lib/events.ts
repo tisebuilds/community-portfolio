@@ -25,18 +25,18 @@ export type Event = {
 };
 
 const EVENT_META = [
-  { slug: "sunset-smores", title: "Sunset & S’mores", date: "2026-07-09", partifulUrl: "" },
-  { slug: "juneteenth-boba", title: "Juneteenth Boba Walk", date: "2026-06-20", partifulUrl: "" },
-  { slug: "dinner-queens", title: "Dinner In Queens", date: "2026-02-16", partifulUrl: "" },
-  { slug: "nye-happy-hour", title: "New Year Happy Hour", date: "2026-01-29", partifulUrl: "" },
-  { slug: "new-boundaries", title: "New Year, New Boundaries", date: "2026-01-22", partifulUrl: "" },
-  { slug: "spotify-wrapped", title: "Spotify Wrapped Listening Party", date: "2025-12-19", partifulUrl: "" },
-  { slug: "cookie-swap", title: "Holiday Cookie Swap", date: "2025-12-11", partifulUrl: "" },
-  { slug: "alumni-potluck-sep", title: "Alumni Potluck", date: "2025-09-13", partifulUrl: "" },
-  { slug: "boba-walk-madison", title: "Boba & Walk, Madison Sq Park 1.0", date: "2025-05-27", partifulUrl: "" },
-  { slug: "alumni-dinner-party", title: "Alumni Dinner Party", date: "2025-02-25", partifulUrl: "" },
-  { slug: "career-workshop", title: "Alumni Career Workshop", date: "2025-01-23", partifulUrl: "" },
-  { slug: "potluck-vol1", title: "Potluck In The Park, Vol. 1", date: "2024-10-20", partifulUrl: "" },
+  { slug: "sunset-smores", title: "Sunset & S’mores", date: "2026-07-09", partifulUrl: "https://partiful.com/e/w8E3zwFEfs4AegyjqEFK" },
+  { slug: "juneteenth-boba", title: "Juneteenth Boba Walk", date: "2026-06-20", partifulUrl: "https://partiful.com/e/nIcKxp2V1VIEwbS8tyT7" },
+  { slug: "dinner-queens", title: "Dinner In Queens", date: "2026-02-16", partifulUrl: "https://partiful.com/e/k02eZyEwhALxReDjMhcg" },
+  { slug: "nye-happy-hour", title: "New Year Happy Hour", date: "2026-01-29", partifulUrl: "https://partiful.com/e/E8mPXyw6T7wEIiHlYIxH" },
+  { slug: "new-boundaries", title: "New Year, New Boundaries", date: "2026-01-22", partifulUrl: "https://partiful.com/e/u0xcfQCHwsXjfIgMjzvH" },
+  { slug: "spotify-wrapped", title: "Spotify Wrapped Listening Party", date: "2025-12-19", partifulUrl: "https://partiful.com/e/7cP5LpPL9D2KvTgebFvA" },
+  { slug: "cookie-swap", title: "Holiday Cookie Swap", date: "2025-12-11", partifulUrl: "https://partiful.com/e/9MNnc3XoOu6UjJsbNYcD" },
+  { slug: "alumni-potluck-sep", title: "Alumni Potluck", date: "2025-09-13", partifulUrl: "https://partiful.com/e/BHFooR5VPb0dySTXnlQv" },
+  { slug: "boba-walk-madison", title: "Boba & Walk, Madison Sq Park 1.0", date: "2025-05-27", partifulUrl: "https://partiful.com/e/cT2eInZbKNXP0Q585D62" },
+  { slug: "alumni-dinner-party", title: "Alumni Dinner Party", date: "2025-02-25", partifulUrl: "https://partiful.com/e/Mwbb80qNxkejbwiWZJRY" },
+  { slug: "career-workshop", title: "Alumni Career Workshop", date: "2025-01-23", partifulUrl: "https://partiful.com/e/kPGAU2HIlOQwe98KoBb9" },
+  { slug: "potluck-vol1", title: "Potluck In The Park, Vol. 1", date: "2024-10-20", partifulUrl: "https://partiful.com/e/A5T675OwKu3VNb9PmjQ1" },
 ] as const;
 
 const PHOTOS_PER_EVENT = 7;

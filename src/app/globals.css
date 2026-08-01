@@ -10,6 +10,15 @@
   --paper: #f7f7f7;
   --ink: #1a1a1a;
   --accent: #007aff;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  /* Film-strip dark: base / cream / ochre markings */
+  --paper: #1a120e;
+  --ink: #f0e6d4;
+  --accent: #c4a06a;
+  color-scheme: dark;
 }
 
 html,
@@ -27,4 +36,22 @@ body {
   font-family: var(--font-sans), "Space Grotesk", -apple-system,
     BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   text-transform: uppercase;
+}
+
+/* Circular theme reveal — disable default VT crossfade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-image-pair(root) {
+  isolation: isolate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

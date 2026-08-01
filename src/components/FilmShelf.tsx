@@ -1,15 +1,41 @@
 "use client";
 
-import { useCallback, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
+import { flushSync } from "react-dom";
 import type { Event, Photo } from "@/lib/events";
 import { events } from "@/lib/events";
-import Lightbox from "./Lightbox";
 import styles from "./FilmShelf.module.css";
 
-type ActivePhoto = {
+type Theme = "light" | "dark";
+
+type Rect = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+type FocusTarget = {
   event: Event;
   photo: Photo;
+  /** Strip frame rect at click — FLIP origin / close destination. */
+  from: Rect;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 };
+
+const FOCUS_MS = 320;
+const FOCUS_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 function ExternalLinkIcon() {
   return (
@@ -45,6 +71,98 @@ function ExternalLinkIcon() {
   );
 }
 
+function SunIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 7 7 0 1 0 20.5 14.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function readTheme(): Theme {
+  if (typeof document === "undefined") return "light";
+  return document.documentElement.getAttribute("data-theme") === "dark"
+    ? "dark"
+    : "light";
+}
+
+function applyTheme(theme: Theme) {
+  const root = document.documentElement;
+  if (theme === "dark") {
+    root.setAttribute("data-theme", "dark");
+  } else {
+    root.removeAttribute("data-theme");
+  }
+  try {
+    localStorage.setItem("theme", theme);
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function supportsViewTransitions(): boolean {
+  return typeof document.startViewTransition === "function";
+}
+
+/** Expand new theme in a circle from the toggle button. */
+function transitionTheme(next: Theme, origin: DOMRect) {
+  const switchTheme = () => applyTheme(next);
+
+  if (!supportsViewTransitions() || prefersReducedMotion()) {
+    switchTheme();
+    return;
+  }
+
+  const x = origin.left + origin.width / 2;
+  const y = origin.top + origin.height / 2;
+  const endRadius = Math.hypot(
+    Math.max(x, window.innerWidth - x),
+    Math.max(y, window.innerHeight - y),
+  );
+
+  const transition = document.startViewTransition(switchTheme);
+
+  transition.ready.then(() => {
+    document.documentElement.animate(
+      {
+        clipPath: [
+          `circle(0px at ${x}px ${y}px)`,
+          `circle(${endRadius}px at ${x}px ${y}px)`,
+        ],
+      },
+      {
+        duration: 480,
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+        pseudoElement: "::view-transition-new(root)",
+      },
+    );
+  });
+}
+
 /** Stable slight tilt from slug, about ±0.7°–1.8°. */
 function stripTilt(slug: string): string {
   let hash = 0;
@@ -56,25 +174,215 @@ function stripTilt(slug: string): string {
   return `${degrees.toFixed(2)}deg`;
 }
 
-export default function FilmShelf() {
-  const [active, setActive] = useState<ActivePhoto | null>(null);
+function centeredPhotoRect(photo: Photo): {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+} {
+  const maxW = Math.min(window.innerWidth * 0.9, 560);
+  const maxH = window.innerHeight - 140;
+  const aspect = photo.width / photo.height;
+  let width = maxW;
+  let height = width / aspect;
+  if (height > maxH) {
+    height = maxH;
+    width = height * aspect;
+  }
+  return {
+    width,
+    height,
+    left: (window.innerWidth - width) / 2,
+    top: (window.innerHeight - height) / 2 - 12,
+  };
+}
 
-  const onPhotoClick = useCallback((event: Event, photo: Photo) => {
-    setActive({ event, photo });
+function flipTo(
+  el: HTMLElement,
+  from: Rect,
+  to: Rect,
+): Animation | null {
+  if (prefersReducedMotion()) return null;
+
+  const dx = from.left - to.left;
+  const dy = from.top - to.top;
+  const sx = from.width / to.width;
+  const sy = from.height / to.height;
+
+  return el.animate(
+    [
+      {
+        transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`,
+      },
+      { transform: "translate(0, 0) scale(1, 1)" },
+    ],
+    {
+      duration: FOCUS_MS,
+      easing: FOCUS_EASE,
+      fill: "none",
+    },
+  );
+}
+
+function rectFromDom(r: DOMRect): Rect {
+  return {
+    left: r.left,
+    top: r.top,
+    width: r.width,
+    height: r.height,
+  };
+}
+
+export default function FilmShelf() {
+  const [active, setActive] = useState<FocusTarget | null>(null);
+  const [scrimLeaving, setScrimLeaving] = useState(false);
+  const [theme, setTheme] = useState<Theme>("light");
+  const photoEls = useRef(new Map<string, HTMLButtonElement>());
+  const focusElRef = useRef<HTMLButtonElement | null>(null);
+  const closingRef = useRef(false);
+  const skipOpenFlip = useRef(false);
+
+  useEffect(() => {
+    setTheme(readTheme());
   }, []);
 
-  const onClose = useCallback(() => setActive(null), []);
+  useEffect(() => {
+    if (!active) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [active]);
+
+  /* Floating photo lives outside the tilted strip so fixed positioning works. */
+  useLayoutEffect(() => {
+    if (!active || skipOpenFlip.current || closingRef.current) return;
+    const el = focusElRef.current;
+    if (!el) return;
+    flipTo(el, active.from, active);
+  }, [active]);
+
+  const onPhotoClick = useCallback(
+    (event: Event, photo: Photo, el: HTMLButtonElement) => {
+      if (active || closingRef.current) return;
+
+      const from = rectFromDom(el.getBoundingClientRect());
+      const target = centeredPhotoRect(photo);
+      skipOpenFlip.current = false;
+      setScrimLeaving(false);
+      setActive({
+        event,
+        photo,
+        from,
+        ...target,
+      });
+    },
+    [active],
+  );
+
+  const onClose = useCallback(() => {
+    if (!active || closingRef.current) return;
+    closingRef.current = true;
+    skipOpenFlip.current = true;
+
+    const el = focusElRef.current;
+    const slotEl = photoEls.current.get(active.photo.id);
+    const finish = () => {
+      // Keep fill:forwards until unmount so the photo never snaps back to center.
+      flushSync(() => {
+        setActive(null);
+        setScrimLeaving(false);
+      });
+      closingRef.current = false;
+    };
+
+    setScrimLeaving(true);
+
+    if (!el || prefersReducedMotion()) {
+      finish();
+      return;
+    }
+
+    // Prefer the live strip slot; fall back to the click-time rect.
+    const slot = slotEl
+      ? rectFromDom(slotEl.getBoundingClientRect())
+      : active.from;
+
+    const anim = el.animate(
+      [
+        { transform: "translate(0, 0) scale(1, 1)" },
+        {
+          transform: `translate(${slot.left - active.left}px, ${slot.top - active.top}px) scale(${slot.width / active.width}, ${slot.height / active.height})`,
+        },
+      ],
+      {
+        duration: FOCUS_MS,
+        easing: FOCUS_EASE,
+        fill: "forwards",
+      },
+    );
+
+    anim.finished.then(finish).catch(finish);
+  }, [active]);
+
+  useEffect(() => {
+    if (!active) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [active, onClose]);
+
+  const onToggleTheme = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      const next: Theme = theme === "dark" ? "light" : "dark";
+      const origin = event.currentTarget.getBoundingClientRect();
+      transitionTheme(next, origin);
+      setTheme(next);
+    },
+    [theme],
+  );
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.headerText}>
+    <div
+      className={[
+        styles.page,
+        active ? styles.pageFocused : "",
+        scrimLeaving ? styles.pageUnfocusing : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <header
+        className={styles.header}
+        aria-hidden={active ? true : undefined}
+      >        <div className={styles.headerText}>
           <p className={styles.handle}>I&apos;m A Designer Who Loves Hosting Things</p>
         </div>
+        <button
+          type="button"
+          className={styles.themeToggle}
+          onClick={onToggleTheme}
+          aria-label={
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          }
+          title={theme === "dark" ? "Light mode" : "Dark mode"}
+        >
+          <span className={styles.themeIconLight}>
+            <MoonIcon />
+          </span>
+          <span className={styles.themeIconDark}>
+            <SunIcon />
+          </span>
+        </button>
       </header>
 
-      <main className={styles.feed}>
-        {events.map((event) => (
+      <main
+        className={styles.feed}
+        aria-hidden={active ? true : undefined}
+      >        {events.map((event) => (
           <section key={event.slug} className={styles.week} aria-label={event.title}>
             <div
               className={styles.photoRow}
@@ -106,28 +414,44 @@ export default function FilmShelf() {
                   <p className={styles.weekRange}>{event.date}</p>
                 </div>
                 <div className={styles.frames}>
-                  {event.photos.map((photo) => (
-                    <div key={photo.id} className={styles.frame}>
-                      <button
-                        type="button"
-                        className={styles.photoBtn}
-                        style={{ aspectRatio: photo.aspect }}
-                        onClick={() => onPhotoClick(event, photo)}
-                        aria-label={`Open ${photo.alt}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={photo.src}
-                          alt={photo.alt}
-                          width={photo.width}
-                          height={photo.height}
-                          loading="lazy"
-                          className={styles.photo}
-                        />
-                      </button>
-                      <span className={styles.frameBarcode} aria-hidden="true" />
-                    </div>
-                  ))}
+                  {event.photos.map((photo) => {
+                    const focused = active?.photo.id === photo.id;
+                    return (
+                      <div key={photo.id} className={styles.frame}>
+                        <button
+                          type="button"
+                          className={
+                            focused
+                              ? `${styles.photoBtn} ${styles.photoInStripHidden}`
+                              : styles.photoBtn
+                          }
+                          style={{ aspectRatio: photo.aspect }}
+                          ref={(node) => {
+                            if (node) photoEls.current.set(photo.id, node);
+                            else photoEls.current.delete(photo.id);
+                          }}
+                          onClick={(e) => {
+                            if (focused) return;
+                            onPhotoClick(event, photo, e.currentTarget);
+                          }}
+                          aria-label={`Open ${photo.alt}`}
+                          aria-hidden={focused || undefined}
+                          tabIndex={focused ? -1 : undefined}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photo.src}
+                            alt={photo.alt}
+                            width={photo.width}
+                            height={photo.height}
+                            loading="lazy"
+                            className={styles.photo}
+                          />
+                        </button>
+                        <span className={styles.frameBarcode} aria-hidden="true" />
+                      </div>
+                    );
+                  })}
                 </div>
                 <div className={styles.sprocketRail} aria-hidden="true" />
               </div>
@@ -137,11 +461,44 @@ export default function FilmShelf() {
       </main>
 
       {active ? (
-        <Lightbox
-          event={active.event}
-          photo={active.photo}
-          onClose={onClose}
-        />
+        <>
+          <button
+            type="button"
+            className={styles.focusHit}
+            aria-label="Close photo"
+            onClick={onClose}
+          />
+          <button
+            type="button"
+            ref={focusElRef}
+            className={styles.photoFocused}
+            style={{
+              left: active.left,
+              top: active.top,
+              width: active.width,
+              height: active.height,
+            }}
+            onClick={onClose}
+            aria-label={`Close ${active.photo.alt}`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={active.photo.src}
+              alt={active.photo.alt}
+              width={active.photo.width}
+              height={active.photo.height}
+              className={styles.photoFocusedImg}
+            />
+          </button>
+          <p
+            className={styles.focusCaption}
+            style={{
+              top: active.top + active.height + 14,
+            }}
+          >
+            {active.event.title} · {active.event.date}
+          </p>
+        </>
       ) : null}
     </div>
   );
