@@ -156,8 +156,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "new-boundaries-02",
-      src: "/events/new-boundaries/02.png",
-      alt: "Writing letters to ourselves during the New Boundaries workshop",
+      src: "/events/new-boundaries/03.png",
+      alt: "Another angle of the group with Dream on the monitor and laptop",
       day: "02",
       frame: "02",
       aspect: "4 / 3",
@@ -166,8 +166,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "new-boundaries-03",
-      src: "/events/new-boundaries/03.png",
-      alt: "Another angle of the group with Dream on the monitor and laptop",
+      src: "/events/new-boundaries/02.png",
+      alt: "Writing letters to ourselves during the New Boundaries workshop",
       day: "03",
       frame: "03",
       aspect: "4 / 3",
