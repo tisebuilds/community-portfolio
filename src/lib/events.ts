@@ -282,8 +282,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
   "alumni-dinner-party": [
     {
       id: "alumni-dinner-party-01",
-      src: "/events/alumni-dinner-party/01.png",
-      alt: "Alumni gathered around a long table at Steinway Steak House",
+      src: "/events/alumni-dinner-party/04.png",
+      alt: "Candid dinner conversation by the brick wall",
       day: "01",
       frame: "01",
       aspect: "4 / 3",
@@ -312,8 +312,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "alumni-dinner-party-04",
-      src: "/events/alumni-dinner-party/04.png",
-      alt: "Candid dinner conversation by the brick wall",
+      src: "/events/alumni-dinner-party/01.png",
+      alt: "Alumni gathered around a long table at Steinway Steak House",
       day: "04",
       frame: "04",
       aspect: "4 / 3",
