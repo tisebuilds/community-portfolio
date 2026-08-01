@@ -321,6 +321,38 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
       height: 768,
     },
   ],
+  "potluck-vol1": [
+    {
+      id: "potluck-vol1-01",
+      src: "/events/potluck-vol1/01.png",
+      alt: "Picnic circle on blankets in Central Park with the skyline beyond",
+      day: "01",
+      frame: "01",
+      aspect: "4 / 3",
+      width: 1024,
+      height: 768,
+    },
+    {
+      id: "potluck-vol1-02",
+      src: "/events/potluck-vol1/02.png",
+      alt: "Two guests smiling on a blue blanket at the park potluck",
+      day: "02",
+      frame: "02",
+      aspect: "3 / 4",
+      width: 768,
+      height: 1024,
+    },
+    {
+      id: "potluck-vol1-03",
+      src: "/events/potluck-vol1/03.png",
+      alt: "Group sitting under the trees sharing snacks at the potluck",
+      day: "03",
+      frame: "03",
+      aspect: "4 / 3",
+      width: 1024,
+      height: 768,
+    },
+  ],
 };
 
 export const events: Event[] = EVENT_META.map((event) => {
