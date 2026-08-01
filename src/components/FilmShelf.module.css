@@ -24,9 +24,10 @@
 }
 
 .themeToggle {
-  position: absolute;
-  right: max(16px, calc((100vw - 960px) / 2 + 16px));
+  position: fixed;
+  right: 16px;
   top: 16px;
+  z-index: 40;
   display: inline-flex;
   align-items: center;
   justify-content: center;
