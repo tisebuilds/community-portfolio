@@ -136,18 +136,29 @@
 }
 
 .sprocketRail {
+  --sprocket-pitch: 16px;
+  --sprocket-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18' viewBox='0 0 16 18'%3E%3Crect x='5' y='4' width='6' height='10' rx='1.35' fill='%23fff'/%3E%3C/svg%3E");
+
+  position: relative;
   flex: 0 0 auto;
   height: 18px;
   background-color: var(--strip);
-  /* Holes use --paper so they track light/dark page color */
-  background-image: radial-gradient(
-    closest-side,
-    var(--paper) 68%,
-    transparent 72%
-  );
-  background-repeat: repeat-x;
-  background-position: 6px center;
-  background-size: 16px 12px;
+}
+
+/* Paper-colored rounded-rect perforations (not ellipses) */
+.sprocketRail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper);
+  -webkit-mask-image: var(--sprocket-mask);
+  mask-image: var(--sprocket-mask);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-position: 6px center;
+  mask-position: 6px center;
+  -webkit-mask-size: var(--sprocket-pitch) 18px;
+  mask-size: var(--sprocket-pitch) 18px;
 }
 
 .stripMeta {
@@ -442,9 +453,15 @@ a.eventLink:hover .externalLink {
   }
 
   .sprocketRail {
+    --sprocket-pitch: 14px;
     height: 14px;
-    background-size: 14px 10px;
-    background-position: 4px center;
+  }
+
+  .sprocketRail::after {
+    -webkit-mask-position: 4px center;
+    mask-position: 4px center;
+    -webkit-mask-size: var(--sprocket-pitch) 14px;
+    mask-size: var(--sprocket-pitch) 14px;
   }
 
   .photoBtn {
