@@ -121,6 +121,28 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
       height: 768,
     },
   ],
+  "career-workshop": [
+    {
+      id: "career-workshop-01",
+      src: "/events/career-workshop/01.png",
+      alt: "Alumni gathered around a conference table during Junior to Senior workshop",
+      day: "01",
+      frame: "01",
+      aspect: "3 / 4",
+      width: 768,
+      height: 1024,
+    },
+    {
+      id: "career-workshop-02",
+      src: "/events/career-workshop/02.png",
+      alt: "Alumni Career Workshop group eating pizza in the conference room",
+      day: "02",
+      frame: "02",
+      aspect: "4 / 3",
+      width: 1024,
+      height: 768,
+    },
+  ],
 };
 
 export const events: Event[] = EVENT_META.map((event) => {
