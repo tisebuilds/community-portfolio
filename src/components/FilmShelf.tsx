@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type CSSProperties } from "react";
 import type { Event, Photo } from "@/lib/events";
 import { events } from "@/lib/events";
 import Lightbox from "./Lightbox";
@@ -14,8 +14,8 @@ type ActivePhoto = {
 function ExternalLinkIcon() {
   return (
     <svg
-      width="16"
-      height="16"
+      width="12"
+      height="12"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -23,26 +23,37 @@ function ExternalLinkIcon() {
       <path
         d="M14 4h6v6"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.25"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M10 14 20 4"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.25"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.25"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
     </svg>
   );
+}
+
+/** Stable slight tilt from slug, about ±0.7°–1.8°. */
+function stripTilt(slug: string): string {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) {
+    hash = (hash * 31 + slug.charCodeAt(i)) | 0;
+  }
+  const unit = ((Math.abs(hash) % 1000) / 1000) * 2 - 1;
+  const degrees = (unit < 0 ? -1 : 1) * (0.7 + Math.abs(unit) * 1.1);
+  return `${degrees.toFixed(2)}deg`;
 }
 
 export default function FilmShelf() {
@@ -65,37 +76,38 @@ export default function FilmShelf() {
       <main className={styles.feed}>
         {events.map((event) => (
           <section key={event.slug} className={styles.week} aria-label={event.title}>
-            <div className={styles.weekHeader}>
-              <div className={styles.weekTitleRow}>
-                <h2 className={styles.weekLabel}>{event.title}</h2>
-                <p className={styles.weekRange}>{event.date}</p>
-                {event.partifulUrl ? (
-                  <a
-                    className={styles.externalLink}
-                    href={event.partifulUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Open ${event.title} on Partiful`}
-                  >
-                    <ExternalLinkIcon />
-                  </a>
-                ) : (
-                  <span className={styles.externalLink} aria-hidden="true">
-                    <ExternalLinkIcon />
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className={styles.photoRow}>
+            <div
+              className={styles.photoRow}
+              style={{ "--tilt": stripTilt(event.slug) } as CSSProperties}
+            >
               <div className={styles.filmStrip}>
                 <div className={styles.sprocketRail} aria-hidden="true" />
+                <div className={styles.stripMeta}>
+                  {event.partifulUrl ? (
+                    <a
+                      className={styles.eventLink}
+                      href={event.partifulUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <h2 className={styles.weekLabel}>{event.title}</h2>
+                      <span className={styles.externalLink} aria-hidden="true">
+                        <ExternalLinkIcon />
+                      </span>
+                    </a>
+                  ) : (
+                    <div className={styles.eventLink}>
+                      <h2 className={styles.weekLabel}>{event.title}</h2>
+                      <span className={styles.externalLink} aria-hidden="true">
+                        <ExternalLinkIcon />
+                      </span>
+                    </div>
+                  )}
+                  <p className={styles.weekRange}>{event.date}</p>
+                </div>
                 <div className={styles.frames}>
                   {event.photos.map((photo) => (
                     <div key={photo.id} className={styles.frame}>
-                      <span className={styles.frameEdge} aria-hidden="true">
-                        {photo.frame}
-                      </span>
                       <button
                         type="button"
                         className={styles.photoBtn}

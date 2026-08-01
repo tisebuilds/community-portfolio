@@ -16,7 +16,7 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   padding: 18px 20px 28px;
   background: linear-gradient(180deg, var(--paper) 70%, transparent);
@@ -24,6 +24,7 @@
 
 .headerText {
   min-width: 0;
+  text-align: center;
 }
 
 .handle {
@@ -34,89 +35,43 @@
   line-height: 1.15;
   text-transform: uppercase;
   color: var(--ink);
+  text-align: center;
 }
 
 .feed {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 40px;
   padding: 8px 0 56px;
 }
 
 .week {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.weekHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0 20px;
-}
-
-.weekTitleRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  min-width: 0;
-}
-
-.weekLabel {
-  margin: 0;
-  flex-shrink: 1;
-  min-width: 0;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.weekRange {
-  margin: 0;
-  flex-shrink: 0;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: color-mix(in srgb, var(--ink) 45%, transparent);
-  white-space: nowrap;
-}
-
-.externalLink {
-  flex-shrink: 0;
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: var(--accent);
-  text-decoration: none;
-  border-radius: 6px;
-  transition: color 120ms ease, background 120ms ease;
-}
-
-a.externalLink:hover {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  padding-block: 6px;
 }
 
 /* Light film roll — continuous strip, sprockets, flush frames */
 .photoRow {
   --strip: color-mix(in srgb, var(--ink) 9%, var(--paper));
   --frame-gap: 3px;
+  --tilt: 0deg;
 
+  container-type: inline-size;
   overflow-x: auto;
-  overflow-y: hidden;
-  margin: 0 20px;
+  overflow-y: visible;
+  margin: 0;
   padding: 0;
+  transform: rotate(var(--tilt));
+  transform-origin: center center;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photoRow {
+    transform: none;
+  }
 }
 
 .photoRow::-webkit-scrollbar {
@@ -141,6 +96,72 @@ a.externalLink:hover {
   background-size: 16px 18px;
 }
 
+.stripMeta {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100cqw;
+  max-width: 100cqw;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 2px 10px 6px;
+  background: var(--strip);
+}
+
+.weekLabel {
+  margin: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weekRange {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  white-space: nowrap;
+}
+
+.eventLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  max-width: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.eventLink:hover .weekLabel,
+a.eventLink:hover .externalLink {
+  opacity: 0.7;
+}
+
+.externalLink {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: var(--ink);
+  line-height: 0;
+}
+
 .frames {
   display: flex;
   align-items: stretch;
@@ -154,19 +175,6 @@ a.externalLink:hover {
   flex-direction: column;
   flex: 0 0 auto;
   gap: 3px;
-}
-
-.frameEdge {
-  display: block;
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  color: color-mix(in srgb, var(--ink) 38%, transparent);
-  text-transform: uppercase;
-  padding: 0 2px;
-  user-select: none;
 }
 
 .frameBarcode {
@@ -226,12 +234,13 @@ a.externalLink:hover {
     font-size: 20px;
   }
 
-  .weekHeader {
-    padding: 0 16px;
+  .stripMeta {
+    padding: 2px 8px 5px;
   }
 
-  .photoRow {
-    margin: 0 16px;
+  .weekLabel,
+  .weekRange {
+    font-size: 12px;
   }
 
   .sprocketRail {
@@ -246,15 +255,9 @@ a.externalLink:hover {
 }
 
 @media (min-width: 900px) {
-  .header,
-  .weekHeader {
+  .header {
     padding-left: max(20px, calc((100vw - 960px) / 2 + 20px));
     padding-right: max(20px, calc((100vw - 960px) / 2 + 20px));
-  }
-
-  .photoRow {
-    margin-left: max(20px, calc((100vw - 960px) / 2 + 20px));
-    margin-right: max(20px, calc((100vw - 960px) / 2 + 20px));
   }
 
   .photoBtn {
