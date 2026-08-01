@@ -166,8 +166,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "spotify-wrapped-03",
-      src: "/events/spotify-wrapped/03.png",
-      alt: "Small group chatting by the presentation screen",
+      src: "/events/spotify-wrapped/05.png",
+      alt: "Four people in conversation during the listening party",
       day: "03",
       frame: "03",
       aspect: "3 / 4",
@@ -186,8 +186,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "spotify-wrapped-05",
-      src: "/events/spotify-wrapped/05.png",
-      alt: "Four people in conversation during the listening party",
+      src: "/events/spotify-wrapped/03.png",
+      alt: "Small group chatting by the presentation screen",
       day: "05",
       frame: "05",
       aspect: "3 / 4",
