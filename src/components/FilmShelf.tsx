@@ -12,10 +12,6 @@ import {
 import { flushSync } from "react-dom";
 import type { Event, Photo } from "@/lib/events";
 import { events } from "@/lib/events";
-import {
-  createFilmScrollSound,
-  type FilmScrollSound,
-} from "@/lib/filmScrollSound";
 import styles from "./FilmShelf.module.css";
 
 type Theme = "light" | "dark";
@@ -303,29 +299,9 @@ export default function FilmShelf() {
   const feedRef = useRef<HTMLElement | null>(null);
   const closingRef = useRef(false);
   const skipOpenFlip = useRef(false);
-  const scrollSoundRef = useRef<FilmScrollSound | null>(null);
 
   useEffect(() => {
     setTheme(readTheme());
-  }, []);
-
-  useEffect(() => {
-    const sound = createFilmScrollSound();
-    scrollSoundRef.current = sound;
-
-    // Browsers block AudioContext until a user gesture; keep trying on interaction.
-    const unlock = () => sound.unlock();
-    window.addEventListener("pointerdown", unlock);
-    window.addEventListener("keydown", unlock);
-    window.addEventListener("touchstart", unlock, { passive: true });
-
-    return () => {
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
-      window.removeEventListener("touchstart", unlock);
-      sound.dispose();
-      scrollSoundRef.current = null;
-    };
   }, []);
 
   useEffect(() => {
@@ -505,6 +481,8 @@ export default function FilmShelf() {
           theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
         }
         aria-pressed={theme === "dark"}
+        aria-hidden={active ? true : undefined}
+        tabIndex={active ? -1 : undefined}
         title={theme === "dark" ? "Light mode" : "Dark mode"}
       >
         <span className={styles.themeTrack} aria-hidden="true">
@@ -533,11 +511,6 @@ export default function FilmShelf() {
             <div
               className={styles.photoRow}
               style={{ "--tilt": stripTilt(event.slug) } as CSSProperties}
-              onScroll={(e) => {
-                if (active) return;
-                scrollSoundRef.current?.handleScroll(e.currentTarget);
-              }}
-              onPointerDown={() => scrollSoundRef.current?.unlock()}
             >
               <div className={styles.filmStrip}>
                 <div className={styles.sprocketRail} aria-hidden="true" />
