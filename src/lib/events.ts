@@ -107,6 +107,22 @@ function placeholderPhotos(slug: string, title: string): Photo[] {
   });
 }
 
+/** Real photos under /public/events/[slug]/ keyed by event slug. */
+const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>> = {
+  "boba-walk-madison": [
+    {
+      id: "boba-walk-madison-01",
+      src: "/events/boba-walk-madison/01.png",
+      alt: "Group holding boba outside after Madison Square Park walk",
+      day: "01",
+      frame: "01",
+      aspect: "4 / 3",
+      width: 1024,
+      height: 768,
+    },
+  ],
+};
+
 export const events: Event[] = EVENT_META.map((event) => {
   const parsed = parseDate(event.date);
   return {
@@ -114,6 +130,6 @@ export const events: Event[] = EVENT_META.map((event) => {
     date: formatShortDate(parsed),
     week: isoWeek(parsed),
     weekRange: formatWeekRange(parsed),
-    photos: placeholderPhotos(event.slug, event.title),
+    photos: EVENT_PHOTOS[event.slug] ?? placeholderPhotos(event.slug, event.title),
   };
 });
