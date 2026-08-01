@@ -146,8 +146,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
   "new-boundaries": [
     {
       id: "new-boundaries-01",
-      src: "/events/new-boundaries/01.png",
-      alt: "Group smiling around the table with Dream on the screen",
+      src: "/events/new-boundaries/04.png",
+      alt: "Sharing Wendy's around the conference table",
       day: "01",
       frame: "01",
       aspect: "3 / 4",
@@ -176,8 +176,8 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "new-boundaries-04",
-      src: "/events/new-boundaries/04.png",
-      alt: "Sharing Wendy's around the conference table",
+      src: "/events/new-boundaries/01.png",
+      alt: "Group smiling around the table with Dream on the screen",
       day: "04",
       frame: "04",
       aspect: "3 / 4",
