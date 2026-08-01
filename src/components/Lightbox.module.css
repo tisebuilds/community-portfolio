@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: 48px 24px 32px;
-  background: rgba(78, 78, 78, 0.88);
+  background: color-mix(in srgb, var(--ink, #1a1a1a) 72%, transparent);
   cursor: zoom-out;
 }
 
@@ -19,8 +19,7 @@
   padding: 4px 10px;
   border: none;
   background: transparent;
-  color: #f3f2f2;
-  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
+  color: var(--paper, #f7f7f7);
   font-size: 28px;
   line-height: 1;
   cursor: pointer;
@@ -36,7 +35,7 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  max-width: min(90vw, 520px);
+  max-width: min(90vw, 560px);
   max-height: 100%;
   margin: 0;
   cursor: default;
@@ -48,13 +47,15 @@
   max-height: calc(100vh - 120px);
   height: auto;
   object-fit: contain;
-  border-radius: 6px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--paper, #f7f7f7) 20%, transparent);
 }
 
 .caption {
-  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(243, 242, 242, 0.75);
+  color: color-mix(in srgb, var(--paper, #f7f7f7) 75%, transparent);
   text-align: center;
+  text-transform: uppercase;
 }

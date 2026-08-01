@@ -6,18 +6,25 @@
   box-sizing: border-box;
 }
 
+:root {
+  --paper: #f7f7f7;
+  --ink: #1a1a1a;
+  --accent: #007aff;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #f3f2f2;
-  color: #4e4e4e;
+  background: var(--paper);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial,
-    sans-serif;
+  font-family: var(--font-sans), "Space Grotesk", -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  text-transform: uppercase;
 }

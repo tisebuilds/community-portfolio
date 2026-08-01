@@ -29,7 +29,7 @@ export default function Lightbox({ event, photo, onClose }: LightboxProps) {
       className={styles.scrim}
       role="dialog"
       aria-modal="true"
-      aria-label={`${event.title}, frame ${photo.frame}`}
+      aria-label={`${event.title}, ${event.date}`}
       onClick={onClose}
     >
       <button

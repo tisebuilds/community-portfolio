@@ -4,13 +4,46 @@ import { useCallback, useState } from "react";
 import type { Event, Photo } from "@/lib/events";
 import { events } from "@/lib/events";
 import Lightbox from "./Lightbox";
-import RollColumn from "./RollColumn";
 import styles from "./FilmShelf.module.css";
 
 type ActivePhoto = {
   event: Event;
   photo: Photo;
 };
+
+function ExternalLinkIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M14 4h6v6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10 14 20 4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export default function FilmShelf() {
   const [active, setActive] = useState<ActivePhoto | null>(null);
@@ -23,28 +56,62 @@ export default function FilmShelf() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.siteHeader}>
-        <p className={styles.meta}>I&apos;m a designer who loves hosting things</p>
+      <header className={styles.header}>
+        <div className={styles.headerText}>
+          <p className={styles.handle}>I&apos;m A Designer Who Loves Hosting Things</p>
+        </div>
       </header>
 
-      <div className={styles.shelfWrap}>
-        <div className={styles.shelf}>
-          {events.map((event, index) => (
-            <RollColumn
-              key={event.slug}
-              event={event}
-              index={index}
-              autoScrollPaused={active !== null}
-              onPhotoClick={onPhotoClick}
-            />
-          ))}
-        </div>
-      </div>
+      <main className={styles.feed}>
+        {events.map((event) => (
+          <section key={event.slug} className={styles.week} aria-label={event.title}>
+            <div className={styles.weekHeader}>
+              <div className={styles.weekTitleRow}>
+                <h2 className={styles.weekLabel}>{event.title}</h2>
+                <p className={styles.weekRange}>{event.date}</p>
+                {event.partifulUrl ? (
+                  <a
+                    className={styles.externalLink}
+                    href={event.partifulUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${event.title} on Partiful`}
+                  >
+                    <ExternalLinkIcon />
+                  </a>
+                ) : (
+                  <span className={styles.externalLink} aria-hidden="true">
+                    <ExternalLinkIcon />
+                  </span>
+                )}
+              </div>
+            </div>
 
-      <footer className={styles.footer}>
-        <p>© {new Date().getFullYear()} Tise · ColorStack NYC</p>
-        <p className={styles.footerLabel}>FILM ROLLS · COMMUNITY ARCHIVE</p>
-      </footer>
+            <div className={styles.photoRow}>
+              {event.photos.map((photo) => (
+                <button
+                  key={photo.id}
+                  type="button"
+                  className={styles.photoBtn}
+                  style={{ aspectRatio: photo.aspect }}
+                  onClick={() => onPhotoClick(event, photo)}
+                  aria-label={`Open ${photo.alt}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    width={photo.width}
+                    height={photo.height}
+                    loading="lazy"
+                    className={styles.photo}
+                  />
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
+      </main>
 
       {active ? (
         <Lightbox

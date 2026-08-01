@@ -1,93 +1,191 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
+  --paper: #f7f7f7;
+  --ink: #1a1a1a;
+  --accent: #007aff;
+
+  min-height: 100dvh;
   min-height: 100vh;
-  background: #f3f2f2;
-  color: #4e4e4e;
-}
-
-.siteHeader {
-  flex-shrink: 0;
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 24px;
-  padding: 20px 28px 16px;
-  border-bottom: 1px solid rgba(78, 78, 78, 0.12);
-}
-
-.meta {
-  margin: 0;
-  flex-shrink: 0;
-  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: #6d6d6d;
-}
-
-.shelfWrap {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.shelf {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: row;
-  gap: 28px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 18px 28px 8px 28px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.footer {
-  display: none;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 28px;
-  border-top: 1px solid rgba(78, 78, 78, 0.12);
-  font-family: "SF Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: #6d6d6d;
-}
-
-.footer p {
-  margin: 0;
-}
-
-.footerLabel {
-  letter-spacing: 0.1em;
+  background: var(--paper);
+  color: var(--ink);
   text-transform: uppercase;
 }
 
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 14px;
+  background: linear-gradient(180deg, var(--paper) 65%, transparent);
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.handle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 8px 0 56px;
+}
+
+.week {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.weekHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 20px;
+}
+
+.weekTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.weekLabel {
+  margin: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weekRange {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+  white-space: nowrap;
+}
+
+.externalLink {
+  flex-shrink: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: color 120ms ease, background 120ms ease;
+}
+
+a.externalLink:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* Film strip — thick gaps, mixed frame ratios, shared height */
+.photoRow {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0 20px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.photoRow::-webkit-scrollbar {
+  display: none;
+}
+
+.photoBtn {
+  position: relative;
+  flex: 0 0 auto;
+  height: min(48vw, 220px);
+  width: auto;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ink) 8%, var(--paper));
+  cursor: zoom-in;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 @media (max-width: 640px) {
-  .siteHeader {
-    padding: 14px 16px 12px;
-    gap: 12px;
+  .header {
+    padding: 16px 16px 12px;
   }
 
-  .meta {
-    font-size: 11px;
-    letter-spacing: 0.03em;
+  .handle {
+    font-size: 20px;
   }
 
-  .shelf {
-    gap: 20px;
-    padding: 14px 16px 8px 16px;
+  .weekHeader {
+    padding: 0 16px;
   }
 
-  .footer {
-    padding: 10px 16px;
-    font-size: 10px;
+  .photoRow {
+    margin: 0 16px;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  .photoBtn {
+    height: min(42vw, 180px);
+  }
+}
+
+@media (min-width: 900px) {
+  .header,
+  .weekHeader {
+    padding-left: max(20px, calc((100vw - 960px) / 2 + 20px));
+    padding-right: max(20px, calc((100vw - 960px) / 2 + 20px));
+  }
+
+  .photoRow {
+    margin-left: max(20px, calc((100vw - 960px) / 2 + 20px));
+    margin-right: max(20px, calc((100vw - 960px) / 2 + 20px));
+  }
+
+  .photoBtn {
+    height: 240px;
   }
 }
