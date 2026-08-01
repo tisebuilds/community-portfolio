@@ -195,6 +195,28 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
       height: 1024,
     },
   ],
+  "alumni-potluck-sep": [
+    {
+      id: "alumni-potluck-sep-01",
+      src: "/events/alumni-potluck-sep/01.png",
+      alt: "Walking a park path with the Manhattan skyline across the water at sunset",
+      day: "01",
+      frame: "01",
+      aspect: "3 / 4",
+      width: 768,
+      height: 1024,
+    },
+    {
+      id: "alumni-potluck-sep-02",
+      src: "/events/alumni-potluck-sep/02.png",
+      alt: "Alumni picnic on a checkered blanket with Joe's Pizza",
+      day: "02",
+      frame: "02",
+      aspect: "4 / 3",
+      width: 1024,
+      height: 768,
+    },
+  ],
 };
 
 export const events: Event[] = EVENT_META.map((event) => {
