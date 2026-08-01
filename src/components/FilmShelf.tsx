@@ -483,39 +483,40 @@ export default function FilmShelf() {
       >
         <div className={styles.headerText}>
           <p className={styles.handle}>
-            I&apos;m a{" "}
+            I&apos;m A{" "}
             <a
               className={styles.handleLink}
               href="https://x.com/tisebuilds"
               target="_blank"
               rel="noopener noreferrer"
             >
-              designer
+              Designer
             </a>{" "}
-            who loves hosting things
+            Who Loves Hosting Things
           </p>
         </div>
-        <button
-          type="button"
-          className={styles.themeToggle}
-          onClick={onToggleTheme}
-          aria-label={
-            theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-          }
-          aria-pressed={theme === "dark"}
-          title={theme === "dark" ? "Light mode" : "Dark mode"}
-        >
-          <span className={styles.themeTrack} aria-hidden="true">
-            <span className={styles.themeIconSun}>
-              <SunIcon />
-            </span>
-            <span className={styles.themeIconMoon}>
-              <MoonIcon />
-            </span>
-            <span className={styles.themeThumb} />
-          </span>
-        </button>
       </header>
+
+      <button
+        type="button"
+        className={styles.themeToggle}
+        onClick={onToggleTheme}
+        aria-label={
+          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+        }
+        aria-pressed={theme === "dark"}
+        title={theme === "dark" ? "Light mode" : "Dark mode"}
+      >
+        <span className={styles.themeTrack} aria-hidden="true">
+          <span className={styles.themeIconSun}>
+            <SunIcon />
+          </span>
+          <span className={styles.themeIconMoon}>
+            <MoonIcon />
+          </span>
+          <span className={styles.themeThumb} />
+        </span>
+      </button>
 
       <main
         ref={feedRef}

@@ -12,7 +12,7 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
   padding: 18px 16px 36px;
   background: linear-gradient(180deg, var(--paper) 70%, transparent);
@@ -20,7 +20,7 @@
 
 .headerText {
   min-width: 0;
-  text-align: left;
+  text-align: center;
 }
 
 .themeToggle {
@@ -29,10 +29,11 @@
   --thumb: 22px;
   --pad: 3px;
 
-  position: relative;
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
   z-index: 40;
   display: inline-flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: var(--toggle-w);
@@ -146,9 +147,9 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   line-height: 1.15;
-  text-transform: none;
+  text-transform: uppercase;
   color: var(--ink);
-  text-align: left;
+  text-align: center;
 }
 
 .handleLink {
@@ -520,6 +521,9 @@ a.eventLink:hover .externalLink {
     --toggle-w: 50px;
     --toggle-h: 26px;
     --thumb: 20px;
+
+    right: 12px;
+    bottom: 12px;
   }
 
   .handle {
