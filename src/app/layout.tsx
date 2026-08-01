@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
+const ioskeleyMono = localFont({
+  src: [
+    {
+      path: "./fonts/IoskeleyMono-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/IoskeleyMono-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-sans",
   display: "swap",
 });
@@ -23,11 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={spaceGrotesk.variable} suppressHydrationWarning>
+    <html lang="en" className={ioskeleyMono.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className={spaceGrotesk.className}>{children}</body>
+      <body className={ioskeleyMono.className}>{children}</body>
     </html>
   );
 }

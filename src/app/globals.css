@@ -33,8 +33,7 @@ body {
 }
 
 body {
-  font-family: var(--font-sans), "Space Grotesk", -apple-system,
-    BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans), "Ioskeley Mono", ui-monospace, monospace;
   text-transform: uppercase;
 }
 
