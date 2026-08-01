@@ -398,7 +398,7 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
   "juneteenth-boba": [
     {
       id: "juneteenth-boba-01",
-      src: "/events/juneteenth-boba/01.jpg",
+      src: "/events/juneteenth-boba/09.jpg",
       alt: "Juneteenth Boba Walk — group outdoors",
       day: "01",
       frame: "01",
@@ -478,7 +478,7 @@ const EVENT_PHOTOS: Partial<Record<(typeof EVENT_META)[number]["slug"], Photo[]>
     },
     {
       id: "juneteenth-boba-09",
-      src: "/events/juneteenth-boba/09.jpg",
+      src: "/events/juneteenth-boba/01.jpg",
       alt: "Juneteenth Boba Walk — group outdoors",
       day: "09",
       frame: "09",
