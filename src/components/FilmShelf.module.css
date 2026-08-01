@@ -18,8 +18,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px 14px;
-  background: linear-gradient(180deg, var(--paper) 65%, transparent);
+  padding: 18px 20px 28px;
+  background: linear-gradient(180deg, var(--paper) 70%, transparent);
 }
 
 .headerText {
@@ -106,24 +106,83 @@ a.externalLink:hover {
   background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
-/* Film strip — thick gaps, mixed frame ratios, shared height */
+/* Light film roll — continuous strip, sprockets, flush frames */
 .photoRow {
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
+  --strip: color-mix(in srgb, var(--ink) 9%, var(--paper));
+  --frame-gap: 3px;
+
   overflow-x: auto;
   overflow-y: hidden;
   margin: 0 20px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: var(--paper);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
+  padding: 0;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 
 .photoRow::-webkit-scrollbar {
   display: none;
+}
+
+.filmStrip {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  min-width: 100%;
+  background: var(--strip);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.sprocketRail {
+  flex: 0 0 auto;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18' viewBox='0 0 16 18'%3E%3Crect x='4' y='4' width='7' height='10' rx='1.4' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 6px center;
+  background-size: 16px 18px;
+}
+
+.frames {
+  display: flex;
+  align-items: stretch;
+  gap: var(--frame-gap);
+  padding: 0 6px;
+}
+
+.frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  gap: 3px;
+}
+
+.frameEdge {
+  display: block;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--ink) 38%, transparent);
+  text-transform: uppercase;
+  padding: 0 2px;
+  user-select: none;
+}
+
+.frameBarcode {
+  display: block;
+  height: 8px;
+  margin: 0 2px 1px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ink) 32%, transparent) 0 1px,
+    transparent 1px 3px,
+    color-mix(in srgb, var(--ink) 22%, transparent) 3px 4px,
+    transparent 4px 7px,
+    color-mix(in srgb, var(--ink) 40%, transparent) 7px 9px,
+    transparent 9px 12px
+  );
+  opacity: 0.7;
 }
 
 .photoBtn {
@@ -135,10 +194,20 @@ a.externalLink:hover {
   margin: 0;
   padding: 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
-  background: color-mix(in srgb, var(--ink) 8%, var(--paper));
+  background: color-mix(in srgb, var(--ink) 6%, var(--paper));
   cursor: zoom-in;
+  transition: opacity 140ms ease;
+}
+
+.photoBtn:hover {
+  opacity: 0.92;
+}
+
+.photoBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .photo {
@@ -150,7 +219,7 @@ a.externalLink:hover {
 
 @media (max-width: 640px) {
   .header {
-    padding: 16px 16px 12px;
+    padding: 16px 16px 24px;
   }
 
   .handle {
@@ -163,9 +232,12 @@ a.externalLink:hover {
 
   .photoRow {
     margin: 0 16px;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 10px;
+  }
+
+  .sprocketRail {
+    height: 14px;
+    background-size: 14px 14px;
+    background-position: 4px center;
   }
 
   .photoBtn {

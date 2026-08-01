@@ -88,26 +88,37 @@ export default function FilmShelf() {
             </div>
 
             <div className={styles.photoRow}>
-              {event.photos.map((photo) => (
-                <button
-                  key={photo.id}
-                  type="button"
-                  className={styles.photoBtn}
-                  style={{ aspectRatio: photo.aspect }}
-                  onClick={() => onPhotoClick(event, photo)}
-                  aria-label={`Open ${photo.alt}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photo.src}
-                    alt={photo.alt}
-                    width={photo.width}
-                    height={photo.height}
-                    loading="lazy"
-                    className={styles.photo}
-                  />
-                </button>
-              ))}
+              <div className={styles.filmStrip}>
+                <div className={styles.sprocketRail} aria-hidden="true" />
+                <div className={styles.frames}>
+                  {event.photos.map((photo) => (
+                    <div key={photo.id} className={styles.frame}>
+                      <span className={styles.frameEdge} aria-hidden="true">
+                        {photo.frame}
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.photoBtn}
+                        style={{ aspectRatio: photo.aspect }}
+                        onClick={() => onPhotoClick(event, photo)}
+                        aria-label={`Open ${photo.alt}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photo.src}
+                          alt={photo.alt}
+                          width={photo.width}
+                          height={photo.height}
+                          loading="lazy"
+                          className={styles.photo}
+                        />
+                      </button>
+                      <span className={styles.frameBarcode} aria-hidden="true" />
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.sprocketRail} aria-hidden="true" />
+              </div>
             </div>
           </section>
         ))}
