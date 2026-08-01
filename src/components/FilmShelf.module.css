@@ -311,15 +311,14 @@ a.eventLink:hover .externalLink {
 
 /* Focus: fade the site away; only photo + caption stay visible.
    Floating photo is outside .photoRow — tilt transform would trap fixed pos.
-   Keep the shelf faded for the whole close FLIP; it fades back only after
-   active clears (avoids the site popping in behind a mid-flight photo). */
+   On close: morph back, home strip fades 330ms, then the rest staggers in. */
 .header,
-.feed {
-  transition: opacity 280ms ease;
+.week {
+  transition: opacity 330ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .pageFocused .header,
-.pageFocused .feed {
+.pageFocused .week {
   opacity: 0;
   pointer-events: none;
 }
@@ -407,7 +406,7 @@ a.eventLink:hover .externalLink {
   }
 
   .header,
-  .feed {
+  .week {
     transition: none;
   }
 

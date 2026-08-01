@@ -36,6 +36,10 @@ type FocusTarget = {
 
 const FOCUS_MS = 320;
 const FOCUS_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+const SHELF_FADE_MS = 330;
+const SHELF_FADE_EASE = "cubic-bezier(0.33, 0, 0.2, 1)";
+/** Delay between neighboring strips on exit reveal. */
+const SHELF_STAGGER_MS = 70;
 
 function ExternalLinkIcon() {
   return (
@@ -233,12 +237,66 @@ function rectFromDom(r: DOMRect): Rect {
   };
 }
 
+/** Sum CSS rotations from el up to the document (strip tilt lives on .photoRow). */
+function ancestorRotationDeg(el: HTMLElement): number {
+  let angle = 0;
+  let node: HTMLElement | null = el;
+  while (node && node !== document.documentElement) {
+    const t = getComputedStyle(node).transform;
+    if (t && t !== "none") {
+      const m = new DOMMatrixReadOnly(t);
+      angle += Math.atan2(m.b, m.a) * (180 / Math.PI);
+    }
+    node = node.parentElement;
+  }
+  return angle;
+}
+
+/**
+ * Animate the floating photo back onto its strip slot, matching size + tilt
+ * (getBoundingClientRect is an AABB and would land wrong on a rotated strip).
+ */
+function flipCloseToSlot(
+  el: HTMLElement,
+  active: FocusTarget,
+  slotEl: HTMLButtonElement,
+): Animation {
+  const w = slotEl.offsetWidth;
+  const h = slotEl.offsetHeight;
+  const aabb = slotEl.getBoundingClientRect();
+  const toCx = aabb.left + aabb.width / 2;
+  const toCy = aabb.top + aabb.height / 2;
+  const fromCx = active.left + active.width / 2;
+  const fromCy = active.top + active.height / 2;
+  const angle = ancestorRotationDeg(slotEl);
+
+  return el.animate(
+    [
+      {
+        transform: "translate(0, 0) scale(1, 1) rotate(0deg)",
+        transformOrigin: "center center",
+      },
+      {
+        transform: `translate(${toCx - fromCx}px, ${toCy - fromCy}px) scale(${w / active.width}, ${h / active.height}) rotate(${angle}deg)`,
+        transformOrigin: "center center",
+      },
+    ],
+    {
+      duration: FOCUS_MS,
+      easing: FOCUS_EASE,
+      fill: "forwards",
+    },
+  );
+}
+
 export default function FilmShelf() {
   const [active, setActive] = useState<FocusTarget | null>(null);
   const [scrimLeaving, setScrimLeaving] = useState(false);
   const [theme, setTheme] = useState<Theme>("light");
   const photoEls = useRef(new Map<string, HTMLButtonElement>());
   const focusElRef = useRef<HTMLButtonElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+  const feedRef = useRef<HTMLElement | null>(null);
   const closingRef = useRef(false);
   const skipOpenFlip = useRef(false);
 
@@ -288,42 +346,81 @@ export default function FilmShelf() {
 
     const el = focusElRef.current;
     const slotEl = photoEls.current.get(active.photo.id);
+    const header = headerRef.current;
+    const feed = feedRef.current;
+    const weeks = feed
+      ? Array.from(feed.querySelectorAll<HTMLElement>("[data-event-slug]"))
+      : [];
+
+    const clearInline = () => {
+      header?.style.removeProperty("transition");
+      header?.style.removeProperty("opacity");
+      for (const week of weeks) {
+        week.style.removeProperty("transition");
+        week.style.removeProperty("opacity");
+      }
+      slotEl?.style.removeProperty("opacity");
+    };
+
     const finish = () => {
-      // Keep fill:forwards until unmount so the photo never snaps back to center.
       flushSync(() => {
         setActive(null);
         setScrimLeaving(false);
       });
+      clearInline();
       closingRef.current = false;
     };
 
     setScrimLeaving(true);
 
-    if (!el || prefersReducedMotion()) {
+    if (!el || !slotEl || prefersReducedMotion()) {
       finish();
       return;
     }
 
-    // Prefer the live strip slot; fall back to the click-time rect.
-    const slot = slotEl
-      ? rectFromDom(slotEl.getBoundingClientRect())
-      : active.from;
+    const anim = flipCloseToSlot(el, active, slotEl);
 
-    const anim = el.animate(
-      [
-        { transform: "translate(0, 0) scale(1, 1)" },
-        {
-          transform: `translate(${slot.left - active.left}px, ${slot.top - active.top}px) scale(${slot.width / active.width}, ${slot.height / active.height})`,
-        },
-      ],
-      {
-        duration: FOCUS_MS,
-        easing: FOCUS_EASE,
-        fill: "forwards",
-      },
-    );
+    void anim.finished
+      .then(async () => {
+        // Strip ready under the floater (overrides .photoInStripHidden).
+        slotEl.style.opacity = "1";
 
-    anim.finished.then(finish).catch(finish);
+        const fadeIn = (node: HTMLElement | null, delayMs: number) => {
+          if (!node) return;
+          node.style.transition = "none";
+          node.style.opacity = "0";
+          void node.offsetHeight;
+          node.style.transition = `opacity ${SHELF_FADE_MS}ms ${SHELF_FADE_EASE} ${delayMs}ms`;
+          node.style.opacity = "1";
+        };
+
+        // Home strip fades in fully first; then header + other rolls stagger in.
+        const activeIdx = weeks.findIndex(
+          (week) => week.dataset.eventSlug === active.event.slug,
+        );
+        const homeIdx = activeIdx >= 0 ? activeIdx : 0;
+
+        fadeIn(weeks[homeIdx] ?? null, 0);
+
+        const afterHome = SHELF_FADE_MS;
+        fadeIn(header, afterHome);
+
+        let maxDelay = afterHome;
+        weeks.forEach((week, i) => {
+          if (i === homeIdx) return;
+          const order = Math.abs(i - homeIdx);
+          const delay = afterHome + order * SHELF_STAGGER_MS;
+          maxDelay = Math.max(maxDelay, delay);
+          fadeIn(week, delay);
+        });
+
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, maxDelay + SHELF_FADE_MS);
+        });
+
+        finish();
+      })
+      .catch(finish);
   }, [active]);
 
   useEffect(() => {
@@ -356,9 +453,11 @@ export default function FilmShelf() {
         .join(" ")}
     >
       <header
+        ref={headerRef}
         className={styles.header}
         aria-hidden={active ? true : undefined}
-      >        <div className={styles.headerText}>
+      >
+        <div className={styles.headerText}>
           <p className={styles.handle}>I&apos;m A Designer Who Loves Hosting Things</p>
         </div>
         <button
@@ -380,10 +479,17 @@ export default function FilmShelf() {
       </header>
 
       <main
+        ref={feedRef}
         className={styles.feed}
         aria-hidden={active ? true : undefined}
-      >        {events.map((event) => (
-          <section key={event.slug} className={styles.week} aria-label={event.title}>
+      >
+        {events.map((event) => (
+          <section
+            key={event.slug}
+            className={styles.week}
+            data-event-slug={event.slug}
+            aria-label={event.title}
+          >
             <div
               className={styles.photoRow}
               style={{ "--tilt": stripTilt(event.slug) } as CSSProperties}
